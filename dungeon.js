@@ -3,48 +3,6 @@ const ctx = canvas.getContext('2d')
 
 canvas.width = 1024
 canvas.height = 576
-//создание массива с границами
-const collisionmap = []
-for (let i = 0; i < collision.length; i+=104 ){
-    collisionmap.push(collision.slice(i, 104 + i))
-}
-
-const trapdoormap = []
-for (let i = 0; i < trapdoors.length; i+=104 ){
-    trapdoormap.push(trapdoors.slice(i, 104 + i))
-}
-
-const boundaries = []
-//просматривание 2d массива
-collisionmap.forEach((row, i) => {
-    row.forEach((symbo, j) =>{
-        if (symbo === 101)
-            boundaries.push(
-                new Boundary({
-                    position:{
-                        x: j * 64 + (-320),
-                        y: i * 64 + (-320)
-                    }
-                })
-            )
-    })
-})
-
-const trapdoor = []
-trapdoormap.forEach((row, i) => {
-    row.forEach((symbo, j) =>{
-        if (symbo === 39)
-            trapdoor.push(
-                new Boundary({
-                    position:{
-                        x: j * 64 + (-320),
-                        y: i * 64 + (-320)
-                    }
-                })
-            )
-    })
-})
- 
 
 const image = new Image()
 image.src = './img/map.png'
@@ -119,48 +77,56 @@ function animate(){
     player.draw()
     let moving = true
     player.moving = false
+
     let trapdoorcollision1 = false
     let trapdoorcollision2 = false
-    const trdoor1 = trapdoor[0]
-    if (rectangularCollision({
-        rectangle1: player,
-        rectangle2: {
-            trdoor1, 
-            position: {
-                x: trdoor1.position.x,
-                y: trdoor1.position.y
+    for (let i = 0; i < trapdoor.length; i++){
+        const trdoor1 = trapdoor[0]
+        if (rectangularCollision({
+            rectangle1: player,
+            rectangle2: {
+                ...trdoor1, 
+                position: {
+                    x: trdoor1.position.x,
+                    y: trdoor1.position.y
+                }
             }
-        }
-    })
+        })
     ) {
-        console.log('ddd')
-        trapdoorcollision1 = true
+            trapdoorcollision1 = true
+            break
     }
+    const trdoor2 = trapdoor[1]
+        if (rectangularCollision({
+            rectangle1: player,
+            rectangle2: {
+                ...trdoor2, 
+                position: {
+                    x: trdoor2.position.x,
+                    y: trdoor2.position.y
+                }
+            }
+        })
+    ) {
+            trapdoorcollision2 = true
+            break
+    }
+    }
+    
     if (trapdoorcollision1){
         movingobjects.forEach((movingobjects) => {
-            movingobjects.position.x -= 200
+            movingobjects.position.x -= 400
+            movingobjects.position.y -= 50
+    })
+}
+    if (trapdoorcollision2){
+        movingobjects.forEach((movingobjects) => {
+            movingobjects.position.x += 400
+            movingobjects.position.y -= 50
     })
 }
 
-    const trdoor2 = trapdoor[1]
-    if (rectangularCollision({
-        rectangle1: player,
-        rectangle2: {
-            trdoor2, 
-            position: {
-                x: trdoor2.position.x,
-                y: trdoor2.position.y
-            }
-        }
-    })
-    ) {
-        trapdoorcollision2 = true
-    }
-    if (trapdoorcollision2){
-            movingobjects.forEach((movingobjects) => {
-                movingobjects.position.x += 200
-        })
-    }
+    
         
     if (keys.w.pressed && lastkey ==='w') {
         player.moving = true
