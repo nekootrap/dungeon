@@ -47,7 +47,7 @@ class Boundary {
 }
 
 class Objects {
-    constructor({position, image}){
+    constructor({position, image, }){
         this.position = position
         this.image = image
         

@@ -53,6 +53,25 @@ trapdoormap.forEach((row, i) => {
 const keyImage = new Image()
 keyImage.src = './img/keys.png'
 
+const interKeyImg = new Image()
+interKeyImg.src = './img/interkey.png'
+
+const interkey = new Objects({
+    position:{
+        x: 20,
+        y: 20
+    },
+    image: interKeyImg,
+})
+
+const interkeyininventory = new Objects({
+    position:{
+        x: 20,
+        y: 20
+    },
+    image: keyImage,
+})
+
 const keys = []
 keysmap.forEach((row, i) => {
     row.forEach((symbo, j) =>{

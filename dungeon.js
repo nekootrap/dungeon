@@ -311,9 +311,11 @@ function animate(){
                 movingobjects.position.x += 4
         })}
     }
-    ctx.fillStyle = 'white';
-    ctx.font = "bold 38px serif";
-    ctx.fillText('keys: ' + player.keys, 20, 50);
+    interkey.draw()
+    if (player.keys === 1 ) interkeyininventory.draw()
+    // ctx.fillStyle = 'white';
+    // ctx.font = "bold 64px serif";
+    // ctx.fillText('= ' + player.keys, 20, 50);
 }
 //управление
 lastkey = ''
