@@ -134,35 +134,89 @@ function animate(){
                     ...boundary, 
                     position: {
                         x: boundary.position.x,
-                        y: boundary.position.y + 4
+                        y: boundary.position.y + 3
                     }
                 }
             })
-            ) {console.log('false')}
+            ) {
                 moving = false
-            break
+                break
             }
+        }
 
         if (moving){
-            {console.log('true')}
             movingobjects.forEach((movingobjects) => {
                 movingobjects.position.y += 4
         })}
     }
     else if (keys.s.pressed && lastkey ==='s'){
-        movingobjects.forEach((movingobjects) => {
-            movingobjects.position.y -= 4
-        })
+        for (let i = 0; i < boundaries.length; i++){
+            const boundary = boundaries[i]
+            if (rectangularCollision({
+                rectangle1: player,
+                rectangle2: {
+                    ...boundary, 
+                    position: {
+                        x: boundary.position.x,
+                        y: boundary.position.y + 3
+                    }
+                }
+            })
+            ) 
+            {moving = false
+            break}
+        }
+
+        if (moving){
+            movingobjects.forEach((movingobjects) => {
+                movingobjects.position.y -= 4
+        })}
     }
     else if (keys.d.pressed && lastkey ==='d'){
-        movingobjects.forEach((movingobjects) => {
-            movingobjects.position.x -= 4
-        })
+        for (let i = 0; i < boundaries.length; i++){
+            const boundary = boundaries[i]
+            if (rectangularCollision({
+                rectangle1: player,
+                rectangle2: {
+                    ...boundary, 
+                    position: {
+                        x: boundary.position.x + 3,
+                        y: boundary.position.y 
+                    }
+                }
+            })
+            ) 
+            {moving = false
+            break}
+        }
+
+        if (moving){
+            movingobjects.forEach((movingobjects) => {
+                movingobjects.position.x -= 4
+        })}
     }
     else if (keys.a.pressed && lastkey ==='a'){
-        movingobjects.forEach((movingobjects) => {
-            movingobjects.position.x += 4
-        })
+        for (let i = 0; i < boundaries.length; i++){
+            const boundary = boundaries[i]
+            if (rectangularCollision({
+                rectangle1: player,
+                rectangle2: {
+                    ...boundary, 
+                    position: {
+                        x: boundary.position.x + 3,
+                        y: boundary.position.y 
+                    }
+                }
+            })
+            ) 
+            {moving = false
+            break}
+        }
+
+        if (moving){
+            movingobjects.forEach((movingobjects) => {
+                movingobjects.position.x += 4
+        })}
     }
 }
 //управление
