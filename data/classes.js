@@ -45,3 +45,28 @@ class Boundary {
         ctx.fillRect(this.position.x, this.position.y, this.width, this.height)
     }
 }
+
+class Objects {
+    constructor({position, image}){
+        this.position = position
+        this.image = image
+        
+        this.width = 64
+        this.height = 64
+        
+    }
+    draw(){
+        ctx.drawImage(
+            this.image,
+            0,
+            0,
+            this.image.width,
+            this.image.height,
+            this.position.x,
+            this.position.y,
+            this.image.width,
+            this.image.height
+        )
+        ctx.fillRect(this.position.x, this.position.y, this.width, this.height)
+    }
+}

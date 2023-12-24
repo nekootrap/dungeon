@@ -9,8 +9,18 @@ for (let i = 0; i < trapdoors.length; i+=104 ){
     trapdoormap.push(trapdoors.slice(i, 104 + i))
 }
 
-const boundaries = []
+const keysmap = []
+for (let i = 0; i < keysm.length; i+=104 ){
+    keysmap.push(keysm.slice(i, 104 + i))
+}
+
+const doormap = []
+for(let i = 0; i < doors.length; i+=104){
+    doormap.push(doors.slice(i, 104 + i))
+}
+
 //просматривание 2d массива
+const boundaries = []
 collisionmap.forEach((row, i) => {
     row.forEach((symbo, j) =>{
         if (symbo === 101)
@@ -38,4 +48,54 @@ trapdoormap.forEach((row, i) => {
                 })
             )
     })
+})
+
+const keyImage = new Image()
+keyImage.src = './img/keys.png'
+
+const keys = []
+keysmap.forEach((row, i) => {
+    row.forEach((symbo, j) =>{
+        if (symbo === 100)
+            keys.push(
+                new Objects({
+                    position:{
+                        x: j * 64 + (-320),
+                        y: i * 64 + (-320)
+                    },
+                    image: keyImage,
+                })
+            )
+    })
+})
+
+const keyscollision = []
+keys.forEach((key) => {
+        keyscollision.push(false)
+})
+
+const doorImages = [new Image(), new Image(), new Image(), new Image()]
+const doornums = [37, 38, 47, 57]
+doorImages.forEach((image, imageIndex) => {
+    image.src = './img/door' + doornums[imageIndex] + '.png'
+})
+const doors_arr = []
+doormap.forEach((row, i) => {
+    row.forEach((symbo, j) =>{
+        if (doornums.includes(symbo))
+            doors_arr.push(
+                new Objects({
+                    position:{
+                        x: j * 64 + (-320),
+                        y: i * 64 + (-320)
+                    },
+                    image: doorImages[doornums.indexOf(symbo)],
+                })
+            )
+    })
+})
+
+const doorCollisions = []
+doors_arr.forEach((door)=>{
+    doorCollisions.push(false)
 })
