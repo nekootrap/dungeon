@@ -14,6 +14,16 @@ for (let i = 0; i < keysm.length; i+=104 ){
     keysmap.push(keysm.slice(i, 104 + i))
 }
 
+const peaksmap = []
+for (let i = 0; i < peaksm.length; i+=104 ){
+    peaksmap.push(peaksm.slice(i, 104 + i))
+}
+
+const torchmap = []
+for (let i = 0; i < torchm.length; i+=104 ){
+    torchmap.push(torchm.slice(i, 104 + i))
+}
+
 const doormap = []
 for(let i = 0; i < doors.length; i+=104){
     doormap.push(doors.slice(i, 104 + i))
@@ -34,6 +44,37 @@ collisionmap.forEach((row, i) => {
             )
     })
 })
+
+const peaks = []
+peaksmap.forEach((row, i) => {
+    row.forEach((symbo, j) =>{
+        if (symbo === 102)
+            peaks.push(
+                new Boundary({
+                    position:{
+                        x: j * 64 + (-320),
+                        y: i * 64 + (-320)
+                    }
+                })
+            )
+    })
+})
+
+const torch = []
+torchmap.forEach((row, i) => {
+    row.forEach((symbo, j) =>{
+        if (symbo === 91)
+            torch.push(
+                new Boundary({
+                    position:{
+                        x: j * 64 + (-320),
+                        y: i * 64 + (-320)
+                    }
+                })
+            )
+    })
+})
+
 
 const trapdoor = []
 trapdoormap.forEach((row, i) => {
@@ -77,12 +118,11 @@ keysmap.forEach((row, i) => {
     row.forEach((symbo, j) =>{
         if (symbo === 100)
             keys.push(
-                new Objects({
+                new Boundary({
                     position:{
                         x: j * 64 + (-320),
                         y: i * 64 + (-320)
                     },
-                    image: keyImage,
                 })
             )
     })

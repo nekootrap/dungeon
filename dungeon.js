@@ -7,11 +7,26 @@ canvas.height = 576
 const image = new Image()
 image.src = './img/map.png'
 
+const menuImage = new Image()
+menuImage.src = './img/mapover.png'
+
+const peaksImage = new Image()
+peaksImage.src = './img/peaks.png'
+
+const torchImage = new Image()
+torchImage.src = './img/torch.png'
+
 const playerRightImage = new Image()
 playerRightImage.src = './img/pright.png'
 
 const playerLeftImage = new Image()
 playerLeftImage.src = './img/pleft.png'
+
+const animkeyImage = new Image()
+animkeyImage.src = './img/animkey.png'
+
+const HeardImage = new Image()
+HeardImage.src = './img/heard.png'
 
 const player = new Sprite({
     position: {
@@ -27,7 +42,55 @@ const player = new Sprite({
         left: playerLeftImage
     }
 })
+
+const Peaks = new Objects({
+    position: {
+        x: 200,
+        y: 200
+    },
+    image: peaksImage,
+    frames: {
+        max: 16
+    }
+})
+
+const Keys = new Objects({
+    position: {
+        x: 200,
+        y: 200
+    },
+    image: animkeyImage,
+    frames: {
+        max: 4
+    }
+})
+
+const Torch = new Objects({
+    position: {
+        x: 200,
+        y: 200
+    },
+    image: torchImage,
+    frames: {
+        max: 4
+    }
+})
+
+const Heard = new Objects({
+    position: {
+        x: 930,
+        y: 30
+    },
+    image: HeardImage,
+    frames: {
+        max: 5,
+        val: 0
+    }
+})
+
 player.keys = 0
+player.score = 0
+player.hp = 0
 //задний фон
 const background = new Sprite({
     position: {
@@ -36,6 +99,13 @@ const background = new Sprite({
     },
     image: image
 })
+const gameover = new Sprite({
+    position: {
+        x: 0,
+        y: 0
+    },
+    image: menuImage
+}) 
 //нажата ли кнопка
 const keyss = {
     w: {
@@ -52,19 +122,26 @@ const keyss = {
     },
 }
 
-const movingobjects = [background, ...boundaries, ...trapdoor, ...keys, ...doors_arr]
+const movingobjects = [background, ...boundaries, ...trapdoor, ...keys, ...doors_arr, ...peaks, ...torch]
 
 function rectangularCollision({rectangle1, rectangle2}){
     return (
-        rectangle1.position.x + rectangle1.width >= rectangle2.position.x &&
-        rectangle1.position.x <= rectangle2.position.x + rectangle2.width &&
-        rectangle1.position.y <= rectangle2.position.y + rectangle2.height &&
-        rectangle1.position.y + rectangle1.height >= rectangle2.position.y
+        rectangle1.position.x + rectangle1.width - 4 >= rectangle2.position.x &&
+        rectangle1.position.x + 4 <= rectangle2.position.x + rectangle2.width &&
+        rectangle1.position.y + 4 <= rectangle2.position.y + rectangle2.height &&
+        rectangle1.position.y + rectangle1.height - 4 >= rectangle2.position.y
     )
 }
 //анимация
 function animate(){
-    window.requestAnimationFrame(animate)
+    if (player.hp <= 4){
+        window.requestAnimationFrame(animate)
+    }
+    if (player.hp > 4){
+        ctx.clearRect(0, 0, 1024, 576)
+        gameOver()
+        return
+    }
     background.draw()
     boundaries.forEach((boundary) => {
         boundary.draw()
@@ -78,8 +155,25 @@ function animate(){
     doors_arr.forEach((dooor) => {
         dooor.draw()
     })
+    Heard.draw()
+    
+    for (let i = 0; i < torch.length; i++){
+        let torch1 = torch[i]
+        Torch.position.x = torch1.position.x
+        Torch.position.y = torch1.position.y
+        Torch.draw()
+    }
+    for (let i = 0; i < peaks.length; i++){
+        let peaks1 = peaks[i]
+        Peaks.position.x = peaks1.position.x
+        Peaks.position.y = peaks1.position.y
+        Peaks.draw()
+    }
     player.draw()
+    Peaks.moving = true
+    Torch.moving = true
     let moving = true
+    let movingpeaks = true
     player.moving = false
 
     for (let z = 0; z < doors_arr.length; z++) {
@@ -120,7 +214,6 @@ function animate(){
                     doorCollisions.splice(z, 1)
                     doorCollisions.splice(doors_arr.indexOf(neighbour), 1)
                     player.keys -= 1
-                    console.log(player.keys)
                 }
             }
             if (player.keys <= 0){
@@ -138,8 +231,15 @@ function animate(){
             }
         } 
     }
-    
+
+
+    player.draw()
+    Keys.moving = true
     keys.forEach((key, keyindex) => {
+        let keys1 = keys[keyindex]
+        Keys.position.x = keys1.position.x
+        Keys.position.y = keys1.position.y
+        Keys.draw()
         if (rectangularCollision({
             rectangle1: player,
             rectangle2: {
@@ -155,6 +255,7 @@ function animate(){
             keyscollision[keyindex] = true
             keys.splice(keyindex, 1)
             player.keys += 1
+            player.score += 1
             keyscollision.splice(keyindex, 1)
         }
 
@@ -209,10 +310,9 @@ function animate(){
             movingobjects.position.y -= 50
     })
 }
-
     
-        
-    if (keyss.w.pressed && lastkey ==='w') {
+      
+    if (keyss.w.pressed && lastkey ==='w' ) {
         player.moving = true
         for (let i = 0; i < boundaries.length; i++){
             const boundary = boundaries[i]
@@ -232,9 +332,32 @@ function animate(){
             }
         }
 
-        if (moving){
+        for (let i = 0; i < peaks.length; i++){
+            let peaks1 = peaks[i]
+            if (rectangularCollision({
+                rectangle1: player,
+                rectangle2: {
+                    ...peaks1, 
+                    position: {
+                        x: peaks1.position.x,
+                        y: peaks1.position.y + 4
+                    }
+                }
+            })){
+                movingpeaks = false 
+                player.hp += 1
+                Heard.frames.val = player.hp
+                break    
+            }
+        }
+
+        if (moving && movingpeaks){
             movingobjects.forEach((movingobjects) => {
                 movingobjects.position.y += 4
+        })}
+        if (!movingpeaks){
+            movingobjects.forEach((movingobjects) => {
+                movingobjects.position.y -= 50
         })}
     }
     else if (keyss.s.pressed && lastkey ==='s'){
@@ -256,9 +379,32 @@ function animate(){
             break}
         }
 
+        for (let i = 0; i < peaks.length; i++){
+            let peaks1 = peaks[i]
+            if (rectangularCollision({
+                rectangle1: player,
+                rectangle2: {
+                    ...peaks1, 
+                    position: {
+                        x: peaks1.position.x,
+                        y: peaks1.position.y + 4
+                    }
+                }
+            })){
+                movingpeaks = false  
+                player.hp += 1
+                Heard.frames.val = player.hp
+                break    
+            }
+        }
+
         if (moving){
             movingobjects.forEach((movingobjects) => {
                 movingobjects.position.y -= 4
+        })}
+        if (!movingpeaks){
+            movingobjects.forEach((movingobjects) => {
+                movingobjects.position.y += 50
         })}
     }
     else if (keyss.d.pressed && lastkey ==='d'){
@@ -280,10 +426,32 @@ function animate(){
             {moving = false
             break}
         }
+        for (let i = 0; i < peaks.length; i++){
+            let peaks1 = peaks[i]
+            if (rectangularCollision({
+                rectangle1: player,
+                rectangle2: {
+                    ...peaks1, 
+                    position: {
+                        x: peaks1.position.x + 4,
+                        y: peaks1.position.y
+                    }
+                }
+            })){
+                movingpeaks = false   
+                player.hp += 1
+                Heard.frames.val = player.hp
+                break    
+            }
+        }
 
         if (moving){
             movingobjects.forEach((movingobjects) => {
                 movingobjects.position.x -= 4
+        })}
+        if (!movingpeaks){
+            movingobjects.forEach((movingobjects) => {
+                movingobjects.position.x += 50
         })}
     }
     else if (keyss.a.pressed && lastkey ==='a'){
@@ -306,16 +474,36 @@ function animate(){
             break}
         }
 
+        for (let i = 0; i < peaks.length; i++){
+            let peaks1 = peaks[i]
+            if (rectangularCollision({
+                rectangle1: player,
+                rectangle2: {
+                    ...peaks1, 
+                    position: {
+                        x: peaks1.position.x + 4,
+                        y: peaks1.position.y
+                    }
+                }
+            })){
+                movingpeaks = false  
+                player.hp += 1
+                Heard.frames.val = player.hp 
+                break    
+            }
+        }
+
         if (moving){
             movingobjects.forEach((movingobjects) => {
                 movingobjects.position.x += 4
         })}
+        if (!movingpeaks){
+            movingobjects.forEach((movingobjects) => {
+                movingobjects.position.x -= 50
+        })}
     }
     interkey.draw()
     if (player.keys === 1 ) interkeyininventory.draw()
-    // ctx.fillStyle = 'white';
-    // ctx.font = "bold 64px serif";
-    // ctx.fillText('= ' + player.keys, 20, 50);
 }
 //управление
 lastkey = ''
@@ -357,4 +545,11 @@ window.addEventListener('keyup', (e) => {
     }
   })
 
-  animate()
+function gameOver(){
+    gameover.draw()
+    ctx.fillStyle = 'white';
+    ctx.font = "bold 87px serif";
+    ctx.fillText('GAME OVER', 220, 576 / 4 + 50);
+}
+
+animate()
