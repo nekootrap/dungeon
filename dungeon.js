@@ -245,19 +245,19 @@ function animate(){
                     player.keys -= 1
                 }
             }
-            if (player.keys <= 0){
-                // !!!!!!СМЕРТЕЛЬНЫЙ ФАЙЛ!!!!!!
-                // moving = false
-                // !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                if (door.image === doorImages[2] || door.image === doorImages[3]) {
-                    movingobjects.forEach((movingobjects) => {
-                        movingobjects.position.x += 4
-                    })
-                } else {
-                    movingobjects.forEach((movingobjects) => {
-                        movingobjects.position.y += 4
-                    })}
-            }
+            // if (player.keys <= 0){
+            //     // !!!!!!СМЕРТЕЛЬНЫЙ ФАЙЛ!!!!!!
+            //     // moving = false
+            //     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //     if (door.image === doorImages[2] || door.image === doorImages[3]) {
+            //         movingobjects.forEach((movingobjects) => {
+            //             movingobjects.position.x += 4
+            //         })
+            //     } else {
+            //         movingobjects.forEach((movingobjects) => {
+            //             movingobjects.position.y += 4
+            //         })}
+            // }
         } 
     }
 
@@ -340,7 +340,7 @@ function animate(){
             movingobjects.position.y -= 50
     })
 }
-    
+    let movingdoor = true
       
     if (keyss.w.pressed && lastkey ==='w' ) {
         player.moving = true
@@ -380,8 +380,25 @@ function animate(){
                 break    
             }
         }
+        for (let z = 0; z < doors_arr.length; z++) {
+            let door = doors_arr[z]
+            if (rectangularCollision({
+                rectangle1 : player,
+                rectangle2: {
+                    ...door,
+                    position: {
+                        x: door.position.x,
+                        y: door.position.y + 4
+                    }
+                }
+            })){
+                if (player.keys <= 0){
+                    movingdoor = false
+                    break
+            }
+        }}
 
-        if (moving && movingpeaks){
+        if (moving && movingpeaks && movingdoor){
             movingobjects.forEach((movingobjects) => {
                 movingobjects.position.y += 4
         })}
@@ -417,7 +434,7 @@ function animate(){
                     ...peaks1, 
                     position: {
                         x: peaks1.position.x,
-                        y: peaks1.position.y + 4
+                        y: peaks1.position.y - 4
                     }
                 }
             })){
@@ -427,8 +444,25 @@ function animate(){
                 break    
             }
         }
+        for (let z = 0; z < doors_arr.length; z++) {
+            let door = doors_arr[z]
+            if (rectangularCollision({
+                rectangle1 : player,
+                rectangle2: {
+                    ...door,
+                    position: {
+                        x: door.position.x,
+                        y: door.position.y - 4
+                    }
+                }
+            })){
+                if (player.keys <= 0){
+                    movingdoor = false
+                    break
+            }
+        }}
 
-        if (moving){
+        if (moving && movingpeaks && movingdoor){
             movingobjects.forEach((movingobjects) => {
                 movingobjects.position.y -= 4
         })}
@@ -463,7 +497,7 @@ function animate(){
                 rectangle2: {
                     ...peaks1, 
                     position: {
-                        x: peaks1.position.x + 4,
+                        x: peaks1.position.x - 4,
                         y: peaks1.position.y
                     }
                 }
@@ -474,8 +508,25 @@ function animate(){
                 break    
             }
         }
+        for (let z = 0; z < doors_arr.length; z++) {
+            let door = doors_arr[z]
+            if (rectangularCollision({
+                rectangle1 : player,
+                rectangle2: {
+                    ...door,
+                    position: {
+                        x: door.position.x - 4,
+                        y: door.position.y
+                    }
+                }
+            })){
+                if (player.keys <= 0){
+                    movingdoor = false
+                    break
+            }
+        }}
 
-        if (moving){
+        if (moving && movingpeaks && movingdoor){
             movingobjects.forEach((movingobjects) => {
                 movingobjects.position.x -= 4
         })}
@@ -503,6 +554,23 @@ function animate(){
             {moving = false
             break}
         }
+        for (let z = 0; z < doors_arr.length; z++) {
+            let door = doors_arr[z]
+            if (rectangularCollision({
+                rectangle1 : player,
+                rectangle2: {
+                    ...door,
+                    position: {
+                        x: door.position.x + 4,
+                        y: door.position.y
+                    }
+                }
+            })){
+                if (player.keys <= 0){
+                    movingdoor = false
+                    break
+            }
+        }}
 
         for (let i = 0; i < peaks.length; i++){
             let peaks1 = peaks[i]
@@ -523,7 +591,7 @@ function animate(){
             }
         }
 
-        if (moving){
+        if (moving && movingpeaks && movingdoor){
             movingobjects.forEach((movingobjects) => {
                 movingobjects.position.x += 4
         })}
@@ -579,7 +647,7 @@ window.addEventListener('keyup', (e) => {
 function gameOver(){
     gameover.draw()
     ctx.fillStyle = 'white';
-    ctx.font = "bold 87px Bradley Hand ITC";
+    ctx.font = "bold 87px Papyrus";
     //Bradley Hand ITC
     //Ink Free
     //Viner Hand ITC
@@ -589,7 +657,7 @@ function gameOver(){
 function gameWin(){
     gameover.draw()
     ctx.fillStyle = 'white';
-    ctx.font = "bold 87px Bradley Hand ITC";
+    ctx.font = "bold 87px Papyrus";
     ctx.fillText('GAME WIN', 220, 576 / 4 + 50);
 }
 
