@@ -47,11 +47,12 @@ class Boundary {
 }
 
 class Objects {
-    constructor({position, image, frames = { max: 1, val: 0 }, moving }){
+    constructor({position, image, frames = { max: 1, val: 0 }, moving, speed = 300 }){
         this.frames = {...frames, val: 0, elapsed: 0}
         this.position = position
         this.image = image
         this.moving = moving
+        this.speed = speed
         
         this.width = 64
         this.height = 64
@@ -73,7 +74,7 @@ class Objects {
         if (this.frames.max > 1 ){
             this.frames.elapsed++
         }
-        if (this.frames.elapsed % 300 === 0){
+        if (this.frames.elapsed % this.speed === 0){
             if (this.frames.val < this.frames.max - 1) this.frames.val++
         else this.frames.val = 0
         }

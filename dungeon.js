@@ -28,6 +28,9 @@ animkeyImage.src = './img/animkey.png'
 const HeardImage = new Image()
 HeardImage.src = './img/heard.png'
 
+const coinImage = new Image()
+coinImage.src = './img/coin.png'
+
 const player = new Sprite({
     position: {
         x: 1024 / 2 - 64,
@@ -53,6 +56,20 @@ const Peaks = new Objects({
         max: 16
     }
 })
+
+const Coin = new Objects({
+    position: {
+        x: 640,
+        y: 2112
+    },
+    image: coinImage,
+    frames: {
+        max: 4
+    },
+    speed: 10
+})
+
+const coins = [Coin]
 
 const Keys = new Objects({
     position: {
@@ -122,7 +139,7 @@ const keyss = {
     },
 }
 
-const movingobjects = [background, ...boundaries, ...trapdoor, ...keys, ...doors_arr, ...peaks, ...torch]
+const movingobjects = [background, ...boundaries, ...trapdoor, ...keys, ...doors_arr, ...peaks, ...torch, Coin]
 
 function rectangularCollision({rectangle1, rectangle2}){
     return (
@@ -134,13 +151,23 @@ function rectangularCollision({rectangle1, rectangle2}){
 }
 //анимация
 function animate(){
-    if (player.hp <= 4){
+    if (player.hp <= 4 && coins.length != 0){
         window.requestAnimationFrame(animate)
     }
-    if (player.hp > 4){
+    if (player.hp > 4 ){
         ctx.clearRect(0, 0, 1024, 576)
         gameOver()
         return
+    }
+    if (coins.length === 0){
+        ctx.clearRect(0, 0, 1024, 576)
+        gameWin()
+        return
+    }
+    if (rectangularCollision({
+        rectangle1: player,
+        rectangle2: Coin
+    })){if (doors_arr.length === 0){coins.splice(0, coins.length)}
     }
     background.draw()
     boundaries.forEach((boundary) => {
@@ -155,7 +182,9 @@ function animate(){
     doors_arr.forEach((dooor) => {
         dooor.draw()
     })
-    Heard.draw()
+
+    Coin.moving = true
+    Coin.draw()
     
     for (let i = 0; i < torch.length; i++){
         let torch1 = torch[i]
@@ -256,6 +285,7 @@ function animate(){
             keys.splice(keyindex, 1)
             player.keys += 1
             player.score += 1
+            Keys.speed -= 20
             keyscollision.splice(keyindex, 1)
         }
 
@@ -504,6 +534,7 @@ function animate(){
     }
     interkey.draw()
     if (player.keys === 1 ) interkeyininventory.draw()
+    Heard.draw()
 }
 //управление
 lastkey = ''
@@ -548,8 +579,18 @@ window.addEventListener('keyup', (e) => {
 function gameOver(){
     gameover.draw()
     ctx.fillStyle = 'white';
-    ctx.font = "bold 87px serif";
+    ctx.font = "bold 87px Bradley Hand ITC";
+    //Bradley Hand ITC
+    //Ink Free
+    //Viner Hand ITC
     ctx.fillText('GAME OVER', 220, 576 / 4 + 50);
+}
+
+function gameWin(){
+    gameover.draw()
+    ctx.fillStyle = 'white';
+    ctx.font = "bold 87px Bradley Hand ITC";
+    ctx.fillText('GAME WIN', 220, 576 / 4 + 50);
 }
 
 animate()
