@@ -10,6 +10,9 @@ image.src = './img/map.png'
 const menuImage = new Image()
 menuImage.src = './img/mapover.png'
 
+const restartImage = new Image()
+restartImage.src = './img/reset1.png'
+
 const peaksImage = new Image()
 peaksImage.src = './img/peaks.png'
 
@@ -104,6 +107,15 @@ const Heard = new Objects({
         val: 0
     }
 })
+
+const restart = new Objects({
+    position: {
+        x: 390,
+        y: 350
+    },
+    image: restartImage,
+})
+
 
 player.keys = 0
 player.score = 0
@@ -245,19 +257,6 @@ function animate(){
                     player.keys -= 1
                 }
             }
-            // if (player.keys <= 0){
-            //     // !!!!!!СМЕРТЕЛЬНЫЙ ФАЙЛ!!!!!!
-            //     // moving = false
-            //     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //     if (door.image === doorImages[2] || door.image === doorImages[3]) {
-            //         movingobjects.forEach((movingobjects) => {
-            //             movingobjects.position.x += 4
-            //         })
-            //     } else {
-            //         movingobjects.forEach((movingobjects) => {
-            //             movingobjects.position.y += 4
-            //         })}
-            // }
         } 
     }
 
@@ -643,9 +642,11 @@ window.addEventListener('keyup', (e) => {
         break
     }
   })
-
+  window.addEventListener('mousedown', restart)
 function gameOver(){
     gameover.draw()
+    restart.draw()
+    restart.onclick = () => {reload()}
     ctx.fillStyle = 'white';
     ctx.font = "bold 87px Papyrus";
     //Bradley Hand ITC
