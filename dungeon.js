@@ -34,6 +34,11 @@ HeardImage.src = './img/heard.png'
 const coinImage = new Image()
 coinImage.src = './img/coin.png'
 
+var audio = new Audio()
+audio.src = "./sound/metamorphosis.mp3"
+
+  
+
 const player = new Sprite({
     position: {
         x: 1024 / 2 - 64,
@@ -161,6 +166,8 @@ function rectangularCollision({rectangle1, rectangle2}){
         rectangle1.position.y + rectangle1.height - 4 >= rectangle2.position.y
     )
 }
+var ontime 
+
 //анимация
 function animate(){
     if (player.hp <= 4 && coins.length != 0){
@@ -182,6 +189,8 @@ function animate(){
     })){if (doors_arr.length === 0){coins.splice(0, coins.length)}
     }
     background.draw()
+    audio.play()
+    
     boundaries.forEach((boundary) => {
         boundary.draw()
     })
@@ -197,7 +206,11 @@ function animate(){
 
     Coin.moving = true
     Coin.draw()
-    
+
+    var tiime = startTimer()
+    ontime = tiime
+
+
     for (let i = 0; i < torch.length; i++){
         let torch1 = torch[i]
         Torch.position.x = torch1.position.x
@@ -611,7 +624,15 @@ window.addEventListener('keydown', (e) =>{
             keyss.w.pressed = true
             lastkey = 'w'
             break
+        case 'ц':
+            keyss.w.pressed = true
+            lastkey = 'w'
+            break
         case 'a':
+            keyss.a.pressed = true
+            lastkey = 'a'
+            break
+        case 'ф':
             keyss.a.pressed = true
             lastkey = 'a'
             break
@@ -619,7 +640,15 @@ window.addEventListener('keydown', (e) =>{
             keyss.s.pressed = true
             lastkey = 's'
             break
+        case 'ы':
+            keyss.s.pressed = true
+            lastkey = 's'
+            break
         case 'd':
+            keyss.d.pressed = true
+            lastkey = 'd'
+            break
+        case 'в':
             keyss.d.pressed = true
             lastkey = 'd'
             break
@@ -631,35 +660,109 @@ window.addEventListener('keyup', (e) => {
       case 'w':
         keyss.w.pressed = false
         break
+      case 'ц':
+        keyss.w.pressed = false
+        break
       case 'a':
+        keyss.a.pressed = false
+        break
+       case 'ф':
         keyss.a.pressed = false
         break
       case 's':
         keyss.s.pressed = false
         break
+        case 'ы':
+            keyss.s.pressed = false
+            break
       case 'd':
         keyss.d.pressed = false
         break
+        case 'в':
+            keyss.d.pressed = false
+            break
     }
   })
-  window.addEventListener('mousedown', restart)
-function gameOver(){
-    gameover.draw()
-    restart.draw()
-    restart.onclick = () => {reload()}
-    ctx.fillStyle = 'white';
-    ctx.font = "bold 87px Papyrus";
-    //Bradley Hand ITC
-    //Ink Free
-    //Viner Hand ITC
-    ctx.fillText('GAME OVER', 220, 576 / 4 + 50);
+  function Restart(){
+    function getMousePos(canvas, event) {
+        var rect = canvas.getBoundingClientRect();
+        return {
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top,
+        };
+    }
+
+    function isInside(pos, rect) {
+        return pos.x > rect.x && pos.x < rect.x + rect.width && pos.y < rect.y + rect.height && pos.y > rect.y
+    }
+    canvas.addEventListener('click', function(evt) {
+        var mousePos = getMousePos(canvas, evt);
+    
+        if (isInside(mousePos, rect)) {
+        window.document.location.reload();
+        } 
+    }, false);
+
+    var rect = {
+        x: restart.position.x,
+        y: restart.position.y,
+        width: 264,
+        height: 104,
+    };
+    function Playbutton() {
+        ctx.beginPath();
+        ctx.closePath();
+    }
+    Playbutton(rect);
+  
 }
 
 function gameWin(){
     gameover.draw()
+    restart.draw()
+    Restart()
+    ctx.fillStyle = 'white';
+    ctx.font = "bold 40px Papyrus";
+    ctx.fillText(ontime, 460, 300);
     ctx.fillStyle = 'white';
     ctx.font = "bold 87px Papyrus";
     ctx.fillText('GAME WIN', 220, 576 / 4 + 50);
 }
+
+function gameOver(){
+    gameover.draw()
+    restart.draw()
+    Restart()
+    ctx.fillStyle = '#CDBECD ';
+    ctx.font = "bold 87px Papyrus";
+    ctx.fillText('GAME OVER', 190, 576 / 4 + 50);
+}
+
+var sec, now, timer, mins = 0
+var timerr
+now = Date.now()
+function startTimer() {
+    sec = Math.floor((Date.now() - now)/1000)
+    if(sec == 60 ){
+        now = Date.now()
+        mins++
+        if (mins < 10){
+            mins = '0' + mins
+        }
+    }
+    if(sec < 10){
+        sec = '0' + sec
+    }
+    if (mins === 0){
+        mins = '0' + mins
+    }
+    timerr = mins + ':' + sec
+    ctx.fillStyle = 'white'
+    ctx.font = "bold 20px Papyrus"
+    ctx.fillText(timerr, 10, 550)
+    return timerr
+}
+
+
 
 animate()
