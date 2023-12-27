@@ -186,7 +186,7 @@ function animate(){
     }
     if (player.hp > 4 ){
         ctx.clearRect(0, 0, 1024, 576)
-        gameWin()
+        gameOver()
         return
     }
     if (coins.length === 0){
