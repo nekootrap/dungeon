@@ -7,8 +7,11 @@ canvas.height = 576
 const image = new Image()
 image.src = './img/map.png'
 
-const menuImage = new Image()
-menuImage.src = './img/mapover.png'
+const gamewinImage = new Image()
+gamewinImage.src = './img/mapwin.png'
+
+const gameoverImage = new Image()
+gameoverImage.src = './img/mapover.png'
 
 const restartImage = new Image()
 restartImage.src = './img/reset1.png'
@@ -115,7 +118,7 @@ const Heard = new Objects({
 
 const restart = new Objects({
     position: {
-        x: 390,
+        x: 375,
         y: 350
     },
     image: restartImage,
@@ -138,7 +141,15 @@ const gameover = new Sprite({
         x: 0,
         y: 0
     },
-    image: menuImage
+    image: gameoverImage
+}) 
+
+const gamewin = new Sprite({
+    position: {
+        x: 0,
+        y: 0
+    },
+    image: gamewinImage
 }) 
 //нажата ли кнопка
 const keyss = {
@@ -175,7 +186,7 @@ function animate(){
     }
     if (player.hp > 4 ){
         ctx.clearRect(0, 0, 1024, 576)
-        gameOver()
+        gameWin()
         return
     }
     if (coins.length === 0){
@@ -186,7 +197,8 @@ function animate(){
     if (rectangularCollision({
         rectangle1: player,
         rectangle2: Coin
-    })){if (doors_arr.length === 0){coins.splice(0, coins.length)}
+    })){
+        if (doors_arr.length === 0){coins.splice(0, coins.length)}
     }
     background.draw()
     audio.play()
@@ -718,24 +730,18 @@ window.addEventListener('keyup', (e) => {
 }
 
 function gameWin(){
-    gameover.draw()
+    gamewin.draw()
     restart.draw()
     Restart()
     ctx.fillStyle = 'white';
     ctx.font = "bold 40px Papyrus";
-    ctx.fillText(ontime, 460, 300);
-    ctx.fillStyle = 'white';
-    ctx.font = "bold 87px Papyrus";
-    ctx.fillText('GAME WIN', 220, 576 / 4 + 50);
+    ctx.fillText(ontime, 460, 330);
 }
 
 function gameOver(){
     gameover.draw()
     restart.draw()
     Restart()
-    ctx.fillStyle = '#CDBECD ';
-    ctx.font = "bold 87px Papyrus";
-    ctx.fillText('GAME OVER', 190, 576 / 4 + 50);
 }
 
 var sec, now, timer, mins = 0
